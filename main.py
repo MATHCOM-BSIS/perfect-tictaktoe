@@ -8,7 +8,6 @@ class Board():
         self.w = w
         self.h = h
         self.board = np.zeros((self.h, self.w), dtype=np.int)
-        self.big_board = np.zeros((3,3), dtype = np.int)
 
     def __repr__(self):
         string = ''
@@ -23,13 +22,15 @@ class Board():
 class Omok():  
     def __init__(self, board):
         self.board = board
+        self.big_board = np.zeros((3,3), dtype = np.int)
         self.current_player = 1
         self.won_player = 0
         self.last_pos = [-1,-1]
+        self.pos = []
 
     def reset(self):
         self.board.board = 0
-        self.board.big_board = 0
+        self.big_board = np.zeros((3,3), dtype = np.int)
         self.current_player = 1
         self.won_player = 0
 
@@ -53,55 +54,145 @@ class Omok():
     
     ######################################################################## 승리조건 함수 시작
 
+    def small_won(self):
+        player = self.current_player
+
+        self.big_board[self.pos[1] // 3][self.pos[0] // 3] = player
+
+        for y in range(3):
+            for x in range(3): 
+                try:
+                    if (self.big_board[y][x] == player
+                        and self.big_board[y+1][x] == player
+                        and self.big_board[y+2][x] == player):
+                        
+                        self.player_won()
+                        break
+                    
+                except:
+                    pass
+
+                try:
+                    if (self.big_board[y][x] == player
+                        and self.big_board[y][x+1] == player
+                        and self.big_board[y][x+2] == player):
+                        
+                        self.player_won()
+                        break
+                except:
+                    pass
+
+                try:
+                    if (self.big_board[y][x] == player
+                        and self.big_board[y+1][x+1] == player
+                        and self.big_board[y+2][x+2] == player):
+                        
+                        self.player_won()
+                        break
+                except:
+                    pass
+
+                try:
+                    if (self.big_board[y][x] == player
+                        and self.big_board[y+1][x-1] == player
+                        and self.big_board[y+2][x-2] == player):
+                        
+                        self.player_won()
+                        break
+                except:
+                    pass
+
+
+    def player_won(self):
+        Panel(z=1, scale=10, model='quad')
+        _string = "Player "
+
+        if won_player == 1: _string+="1 (O) won!"
+        elif won_player == 2: _string+="2 (X) won!"
+
+        t = Text(_string, scale=3, origin=(0, 0), background=True)
+        t.create_background(padding=(.5,.25), radius=t.size/2)
+
+    def placement(self):
+        npos = [self.last_pos[0] % 3, self.last_pos[1] % 3]
+
+        avpos = []
+        for j in range(0, 3):
+            temp = []
+            for i in range(0, 3):
+                temp.append(0)
+            avpos.append(temp)
+
+        if self.big_board[npos[1]][npos[0]] == 0:
+            avpos[npos[1]][npos[0]] = 1
+        else:
+            for i in range(0, 3):
+                for j in range(0, 3):
+                    if self.big_board[i][j] == 0:
+                        avpos[i][j] = 1
+
+        return avpos
+
+    def extract(self):
+        x = self.pos[0]
+        y = self.pos[1]
+
+        small = np.zeros((3, 3), dtype = int)
+
+        for j in range(0, 3):
+            for i in range(0, 3):
+                small[j][i] = self.board.board[j+3*(y//3)][i+3*(x//3)]
+
+        return small
+
     def check_won(self):
         player = self.current_player
-        for t in range(0,10,3):
-            for y in range(3):
-                for x in range(3):
-                    try:
-                        if (self.board.board[t][x] == player
-                            and self.board.board[t+1][x] == player
-                            and self.board.board[t+2][x] == player):
-                            
-                            self.won_player = player
-                            break
-                    except:
-                        pass
 
-                    try:
-                        if (self.board.board[y][x] == player
-                            and self.board.board[y][x+1] == player
-                            and self.board.board[y][x+2] == player):
-                            
-                            self.won_player = player
-                            break
-                    except:
-                        pass
+        small_board = self.extract()
 
-                    try:
-                        if (self.board.board[y][x] == player
-                            and self.board.board[y+1][x+1] == player
-                            and self.board.board[y+2][x+2] == player):
-                            
-                            self.won_player = player
-                            break
-                    except:
-                        pass
+        for y in range(3):
+            for x in range(3): 
+                try:
+                    if (small_board[y][x] == player
+                        and small_board[y+1][x] == player
+                        and small_board[y+2][x] == player):
+                        
+                        self.small_won()
+                        break
+                except:
+                    pass
 
-                    try:
-                        if (x >= 4 and self.board.board[y][x] == player
-                            and self.board.board[y+1][x-1] == player
-                            and self.board.board[y+2][x-2] == player):
-                            
-                            self.won_player = player
-                            break
-                    except:
-                        pass
+                try:
+                    if (small_board[y][x] == player
+                        and small_board[y][x+1] == player
+                        and small_board[y][x+2] == player):
+                        
+                        self.small_won()
+                        break
+                except:
+                    pass
 
-                if self.won_player > 0:
-                    break
-            
-            return self.won_player
+                try:
+                    if (small_board[y][x] == player
+                        and small_board[y+1][x+1] == player
+                        and small_board[y+2][x+2] == player):
+                        
+                        self.small_won()
+                        break
+                except:
+                    pass
+
+                try:
+                    if (small_board[y][x] == player
+                        and small_board[y+1][x-1] == player
+                        and small_board[y+2][x-2] == player):
+                        
+                        self.small_won()
+                        break
+                except:
+                    pass
+
+    
 
     ############################################################################## 승리조건 함수 끝
 
@@ -124,41 +215,19 @@ board = Board(w=w, h=h)
 board_buttons = [[None for x in range(w)] for y in range(h)]
 game = Omok(board=board)
 
-last_pos = [-1,-1]
+Entity(model='quad', scale=24, color=color._230, x=w//2, y=h//2, z=20)
 
-Entity(model='cube', scale=12, color=color._230, x=w//2, y=h//2, z=20)
-
-Entity(model=Grid(w, h), scale=w, color=color.black,
+Entity(model=Grid(w, h), scale=w*2, color=color.black,
        x=w//2, y=h//2, z=0.1)
 
-Entity(model=Grid(w//3, h//3, thickness=3), scale=w, color=color.black,
+Entity(model=Grid(w//3, h//3, thickness=3), scale=w*2, color=color.black,
        x=w//2, y=h//2, z=0.1)
 
 for y in range(h):
     for x in range(w):
-        b = Button(parent=scene, position=(x, y),
-                   color=color.clear,scale=0.9)
+        b = Button(parent=scene, position=((x-2)*2, (y-2)*2),
+                   color=color.clear,scale=1.8)
         board_buttons[y][x] = b
-
-        def placement(x3, pos):
-            npos = [pos[0]%3, pos[1]%3]
-
-            avpos = []
-            for j in range(0, 3):
-                temp = []
-                for i in range(0, 3):
-                    temp.append(0)
-                avpos.append(temp)
-
-            if x3[npos[1]][npos[0]] == 0:
-                avpos[npos[1]][npos[0]] = 1
-            else:
-                for i in range(0, 3):
-                    for j in range(0, 3):
-                        if x3[i][j] == 0:
-                            avpos[i][j] = 1
-
-            return avpos
 
         def on_mouse_enter(b=b):
             if b.collision:
@@ -172,39 +241,27 @@ for y in range(h):
         b.on_mouse_exit = on_mouse_exit
 
         def on_click(b=b):
+            x, y = int(b.position.x) // 2 + 2, int(h - b.position.y) // 2 + 2
 
-            x, y = int(b.position.x), int(h - b.position.y - 1)
+            game.pos = (x, y)
+
             if game.last_pos[0] == -1 and game.last_pos[1] == -1:
                 avpos = np.ones((3,3), dtype=int)
             else:
-                avpos = np.array(placement(board.big_board, game.last_pos))
+                avpos = np.array(game.placement())
 
-            if avpos[x//3][y//3]:
-                if game.current_player == 1:
-                    b.model = Circle(resolution=32, mode='line', radius=0.4, thickness=3)
-                    b.color = color.blue
-                else:
-                    b.texture = 'x.png'
+            if avpos[y//3][x//3]:
+                if game.current_player == 1: b.texture = 'cop_o.png'
+                else: b.texture = 'thief_x.png'
                 b.collision = False
 
                 game.put(x=x, y=y)
 
-                won_player = game.check_won()
-                if won_player:
-                    Panel(z=1, scale=10, model='quad')
-                    _string = "Player "
-
-                    if won_player == 1: _string+="1 (O) won!"
-                    elif won_player == 2: _string+="2 (X) won!"
-
-                    t = Text(_string, scale=3, origin=(0, 0), background=True)
-                    t.create_background(padding=(.5,.25), radius=Text.size/2)
+                game.check_won()
                 
                 game.last_pos = [x,y]
 
                 game.next()
-
-                print(game.board)
 
         b.on_click = on_click
 
