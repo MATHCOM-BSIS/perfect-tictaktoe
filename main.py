@@ -196,8 +196,6 @@ class Omok():
 
     ############################################################################## 승리조건 함수 끝
 
-
-
 ##################### 메인 UI 함수
 
 w, h = 9, 9
@@ -205,7 +203,7 @@ w, h = 9, 9
 app = Ursina()
 
 window.borderless = False
-window.color = color._50
+window.title = "2021 BSIS MATH-COM The Perfect Ticktaktoe"
 
 camera.orthographic = True
 camera.fov = 23
@@ -215,17 +213,18 @@ board = Board(w=w, h=h)
 board_buttons = [[None for x in range(w)] for y in range(h)]
 game = Omok(board=board)
 
-Entity(model='quad', scale=24, color=color._230, x=w//2, y=h//2, z=20)
+Entity(model='quad', texture = "background.png", scale=Vec2(40,22.5), position = Vec3(w//2, h//2, 4))
+Entity(model = "quad", color = color._160, scale = 20, position = Vec3(w//2, h//2, 3))
 
 Entity(model=Grid(w, h), scale=w*2, color=color.black,
-       x=w//2, y=h//2, z=0.1)
+        position = Vec3(w//2, h//2, 2))
 
 Entity(model=Grid(w//3, h//3, thickness=3), scale=w*2, color=color.black,
-       x=w//2, y=h//2, z=0.1)
+        position = Vec3(w//2, h//2, 1))
 
 for y in range(h):
     for x in range(w):
-        b = Button(parent=scene, position=((x-2)*2, (y-2)*2),
+        b = Button(parent=scene, position=Vec3((x-2)*2, (y-2)*2, 0.5),
                    color=color.clear,scale=1.8)
         board_buttons[y][x] = b
 
@@ -251,15 +250,15 @@ for y in range(h):
                 avpos = np.array(game.placement())
 
             if avpos[y//3][x//3]:
-                if game.current_player == 1: b.texture = 'cop_o.png'
-                else: b.texture = 'thief_x.png'
+                if game.current_player == 1: b.texture = 'thief_x.png'
+                else: b.texture = 'cop_o.png'
                 b.collision = False
 
                 game.put(x=x, y=y)
 
                 game.check_won()
                 
-                game.last_pos = [x,y]
+                game.last_pos = (x, y)
 
                 game.next()
 
