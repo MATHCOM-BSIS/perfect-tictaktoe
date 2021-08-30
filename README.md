@@ -1,6 +1,6 @@
 # Perfect Ticktaktoe (완벽한 틱택토)  
 개발 종료된 프로젝트입니다.  
-[MATH-COM Instagram](https://www.instagram.com/mathcomofficial/)
+[MATH-COM Instagram](https://www.instagram.com/mathcomofficial/)  
 [MATH-COM Webpage](https://www.mathcom.xyz)
 
 ## 게임 개발 용도  
