@@ -1,6 +1,7 @@
 # Perfect Ticktaktoe (완벽한 틱택토)  
 개발 종료된 프로젝트입니다.  
-(MATH-COM Instagram)[https://www.instagram.com/mathcomofficial/]
+[MATH-COM Instagram](https://www.instagram.com/mathcomofficial/)
+[MATH-COM Webpage](https://www.mathcom.xyz)
 
 ## 게임 개발 용도  
 부산일과학고등학교 2021 7월 17일 제9회 승학과학축전의 주제로 뽑힌 "완벽한 틱택토"의 게임 파일 및 발표자료입니다.
